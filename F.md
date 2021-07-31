@@ -6,7 +6,7 @@ One of such types is the `F[_]`. I remember being confused and asking myself wha
 
 Before we can understand what `F[_]` is, we need to understand types in Scala. 
 
-Scala has normal types or what I call level zero types, these types are `Int`, `Float`, `Double`, `String` and even `case classes`. Level zero types or normal types are types that can be attached to a value by themselves that is why it is possible to say
+Scala has normal types or what I call level zero types, these types are `Int`, `Float`, `Double`, `String` and even `case classes`. Level zero types or normal types are types that can be attached to a value by themselves. This is why it is possible to say
 
 ```
 val company : String = "47 Degree"
@@ -16,9 +16,9 @@ case class Person(name: String, age: Int)
 val personOne: Person = Person("Fede", 1000)
 ```
 
-We made mention of `Float`, `Double` and `String` as `normal` or `zero level` types in scala, what about `List`, `Option`, `Either` and `Map`? what are these?
+We made mention of `Float`, `Double` and `String` as `normal` or `level zero` types in scala, what about `List`, `Option`, `Either` and `Map`? what are they?
 
-Well, these are what we call first-order types or level one types because they can't be attached to a value by themselves. If we put the expression below in the Scala compiler we would get this error message 
+Well, these are what we call `first-order` types or `level one` types because they can't be attached to a value by themselves. If we put the expression below in the Scala compiler we would get this error message 
 
 ```
 val countries: List = List("🇬🇭 ", "🇪🇸 ", "🇺🇸", "🇬🇧", "🇯🇵" )
@@ -37,8 +37,16 @@ In order for this to compile, we need to pass the `List` a level zero type or a 
 val countries: List[String] = List("🇬🇭 ", "🇪🇸 ", "🇺🇸", "🇬🇧", "🇯🇵" )
 ```
 
-This means that first-order types or level one types like `List`, `Option`, `Map` and `Either` are `generic types` with a type constructor `[_]` that takes a normal type or level zero type to produce other level zero type.
+This means that first-order types or level one types like `List`, `Option`, `Map` and `Either` are `generic types` with a type constructor `[_]` that takes a normal type or level zero type, `Int`, `String`, `Float` etc, to produce other level zero type.
 
+```
+List // This is a level one type
+```
+and
+
+```
+List[Int] // This is a level zero type
+```
 
 We made mentions of two new words `Type Constructor` and `Generic Types` that need to be understood.
 
@@ -55,12 +63,12 @@ class MyStack[A] {
 }
 ```
 
-We say that `MyStack` is generic because whatever code we write inside of of the `MyStack` class, inside the `{}`, will work for any type `A`. This is what we mean by a type being generic.
+We say that `MyStack` is generic because whatever code we write inside of the `MyStack` class, inside the `{}`, will work for any type `A`. This is what we mean by a type being generic.
 
 
 ## What is a Type Constructor `[_]` or a higher kinded type?.
 
-A type constructor is something like a function which take a type as an argument and returns a type.
+A type constructor is something like a function which takes a type as an argument and returns a type.
 
 ```
 (Int) => Int  
@@ -78,3 +86,31 @@ or
 
 `String => List[String]`
 
+Now that we an understanding of what 
+
+- a `normal` or `level zero` type in Scala is aka `String`, `Int`, `Float` etc 
+- a `first order` or `level one` type in Scala is aka 
+`List`, `Option`, `Map`, `Either`.
+- a type constructor(`[_]`) is aka a function that takes a type and returns a type `String => String`
+
+we can finally review what `F[_]` is in Scala. `F[_]` simple means that a `type` with a `type constructor` or a type with `one slot` and us we say ealier, a type with one slot can be a `List` or an `Option`. This is a way to abstract over level one types.
+
+Lets say we have a `MyFunctor` class which takes a level one type, we could write something like this
+
+```
+class MyFunctor[F[_]] {
+    def map[A, B](fa: F[A])(f:A => B): F[B]
+}
+```
+
+What this means is that we could replace `F[_]` with any level one type and have them use a common method called `map` so we could say
+
+`new MyFunctor[List]` or `new MyFunctor[Option]`
+
+Isn't thhis beautiful?
+
+We just abstracted over all `first-oder` types with one hole to share a common functionality called `map` and this is why we need `F[_]`.
+
+That is basically it. Easy right?
+
+Try and think about the benefits this will provide for us.
