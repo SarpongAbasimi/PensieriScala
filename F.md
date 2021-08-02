@@ -121,7 +121,7 @@ class My47DegreeForOption[Option] {
 }
 ```
 
-Isn't thhis beautiful?
+Isn't this beautiful?
 
 By using `F[_]`, we just abstracted over all `first-oder` types with one hole to share a common functionality called `map` and this is why we need `F[_]`.
 
